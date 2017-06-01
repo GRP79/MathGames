@@ -13,12 +13,27 @@
 int main(int argc, const char * argv[]) {
     @autoreleasepool {
        
-        while (YES) {
+        NSLog(@"Would you like to play? Type the word 'Yes' to start the game or 'Quit' to stop the game");
+        InputCollector *firstAnswer = [[InputCollector alloc] init];
+
+        NSString *finalUserInput = [firstAnswer inputForPrompt:@""];//user input
+        BOOL gameOn = YES;
+
+        if ([finalUserInput isEqualToString:@"Yes"  ]) {
+            gameOn = YES;
+        } else {
+            gameOn = NO;
+        }
+        
+        
+        
+        
+        while (gameOn) {
 
         
-//        InputCollector *inputCollector = [[InputCollector alloc] init];
         AdditionQuestion *yourQuestion = [[AdditionQuestion alloc] init];
-        InputCollector *youAnswer = [[InputCollector alloc] init];
+            
+        InputCollector *yourAnswer = [[InputCollector alloc] init];
         
         
         NSLog(@"%@", yourQuestion.question);
@@ -26,10 +41,15 @@ int main(int argc, const char * argv[]) {
        
         NSLog(@"Enter your answer");
         
-        int correctAnswers = [yourQuestion answer];
+        long correctAnswers = [yourQuestion answer];
         
-        NSString *finalUserInput = [youAnswer inputForPrompt:@""];
+        NSString *finalUserInput = [yourAnswer inputForPrompt:@""];//user input
         
+            if ([finalUserInput isEqualToString:@"Quit" ]) {
+                gameOn = NO;
+                break;
+            }
+            
         int finalUserInputConvert = [finalUserInput intValue];
      
         if (correctAnswers == finalUserInputConvert) {
@@ -43,10 +63,11 @@ int main(int argc, const char * argv[]) {
          NSLog(@"The correct answer is %ld", (long)yourQuestion.answer);
             
             NSLog(@"\n\n\nTry again!");
-        
+            
     }
     
-        
+        NSLog(@"Thanks for playing");
 }
+
     return 0;
-}
+    }
