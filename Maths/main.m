@@ -8,66 +8,91 @@
 
 #import <Foundation/Foundation.h>
 #import "InputCollector.h"
-#import "AdditionQuestion.h"
+#import "Question.h"
+#import "QuestionManager.h"
+#import "QuestionFactory.h"
+#import "ScoreKeeper.h"
 
 int main(int argc, const char * argv[]) {
     @autoreleasepool {
-       
-        NSLog(@"Would you like to play? Type the word 'Yes' to start the game or 'Quit' to stop the game");
+        
+        // QuestionManager *manageQuestions = [[QuestionManager alloc]init];
+        
+        ScoreKeeper *scoreKeeper = [[ScoreKeeper alloc]init];
+        QuestionFactory *questionFactory = [[QuestionFactory alloc] init];
+        
+        
+        NSLog(@"Would you like to play? Type the word 'Yes' to start the game or 'Quit' to stop the game.");
         InputCollector *firstAnswer = [[InputCollector alloc] init];
-
+        
         NSString *finalUserInput = [firstAnswer inputForPrompt:@""];//user input
         BOOL gameOn = YES;
-
+        
         if ([finalUserInput isEqualToString:@"Yes"  ]) {
             gameOn = YES;
         } else {
             gameOn = NO;
         }
         
-        
-        
-        
         while (gameOn) {
-
-        
-        AdditionQuestion *yourQuestion = [[AdditionQuestion alloc] init];
             
-        InputCollector *yourAnswer = [[InputCollector alloc] init];
-        
-        
-        NSLog(@"%@", yourQuestion.question);
-        
-       
-        NSLog(@"Enter your answer");
-        
-        long correctAnswers = [yourQuestion answer];
-        
-        NSString *finalUserInput = [yourAnswer inputForPrompt:@""];//user input
-        
+            
+            Question *question = [[Question alloc] init];
+            question = [questionFactory generatedRandomQuestion];
+            
+            InputCollector *yourAnswer = [[InputCollector alloc] init];
+            
+            
+            NSLog(@"%@", question.question); //retrieve random question
+            
+//            NSLog(@"%@", question.startTime );
+            
+            
+            NSLog(@"Enter your answer");
+            
+            
+            long systemGeneratedAnswer = [question answer];
+            
+            NSString *finalUserInput = [yourAnswer inputForPrompt:@""];//user input
+            
             if ([finalUserInput isEqualToString:@"Quit" ]) {
                 gameOn = NO;
                 break;
             }
             
-        int finalUserInputConvert = [finalUserInput intValue];
-     
-        if (correctAnswers == finalUserInputConvert) {
+            int finalUserInputConvert = [finalUserInput intValue];
             
-            NSLog(@"You are correct!");
-            NSLog(@"\n\n\nTry again!");
+            if (systemGeneratedAnswer == finalUserInputConvert) {
+                
+                NSLog(@"You are correct!");
+                [scoreKeeper correct];
+                [scoreKeeper summary];
+                
+                
+                NSLog(@"\n\n\nTry again!");
+            }
+            else {
+                NSLog(@"You are not correct");
+                [scoreKeeper wrong];
+                [scoreKeeper summary];
+                
+                
+                NSLog(@"\n\n\n Try another!");
+            }
+            
+            
+            [question userResponse];
+            [scoreKeeper perecentageCorrect];
+            double time = question.answerTime;
+            int myTime = (int)time;
+            NSLog(@"You have been playing for %d seconds", myTime);
+            
         }
-        else
-            NSLog(@"You are not correct");
         
-         NSLog(@"The correct answer is %ld", (long)yourQuestion.answer);
-            
-            NSLog(@"\n\n\nTry again!");
-            
+        
+        NSLog(@"Thanks for playing");
+        
     }
     
-        NSLog(@"Thanks for playing");
-}
-
     return 0;
-    }
+}
